@@ -368,26 +368,6 @@
 	};
 
 	/*
-	 * In IE9, <source> elements get removed if they aren't children of
-	 * video elements. Thus, we conditionally wrap source elements
-	 * using <!--[if IE 9]><video style="display: none;"><![endif]-->
-	 * and must account for that here by moving those source elements
-	 * back into the picture element.
-	 */
-	pf.removeVideoShim = function( picture ) {
-		var videos = picture.getElementsByTagName( "video" );
-		if ( videos.length ) {
-			var video = videos[ 0 ],
-				vsources = video.getElementsByTagName( "source" );
-			while ( vsources.length ) {
-				picture.insertBefore( vsources[ 0 ], video );
-			}
-			// Remove the video element once we're finished removing its children
-			video.parentNode.removeChild( video );
-		}
-	};
-
-	/*
 	 * Find all `img` elements, and add them to the candidate list if they have
 	 * a `picture` parent, a `sizes` attribute in basic `srcset` supporting browsers,
 	 * a `srcset` attribute at all, and they haven’t been evaluated already.
@@ -408,7 +388,7 @@
 	};
 
 	pf.getMatch = function( img, picture ) {
-		var sources = picture.childNodes,
+		var sources = picture.querySelectorAll("source, img"),
 			match;
 
 		// Go through each child, and if they have media queries, evaluate them
@@ -489,9 +469,6 @@
 
 			// if `img` is in a `picture` element
 			if ( parent.nodeName.toUpperCase() === "PICTURE" ) {
-
-				// IE9 video workaround
-				pf.removeVideoShim( parent );
 
 				// return the first match which might undefined
 				// returns false if there is a pending source

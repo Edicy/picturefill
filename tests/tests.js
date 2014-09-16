@@ -9,7 +9,6 @@
 	}
 
 	var pf, originalDprMethod,
-		originalVideoShimMethod,
 		originalMatchesMedia,
 		originalProcessSourceSet,
 		originalGetWidthFromLength,
@@ -21,7 +20,6 @@
 	module( "method", {
 		setup: function() {
 			originalDprMethod = pf.getDpr;
-			originalVideoShimMethod = pf.removeVideoShim;
 			originalMatchesMedia = pf.matchesMedia;
 			originalProcessSourceSet = pf.processSourceSet;
 			originalGetWidthFromLength = pf.getWidthFromLength;
@@ -30,7 +28,6 @@
 
 		teardown: function() {
 			pf.getDpr = originalDprMethod;
-			pf.removeVideoShim = originalVideoShimMethod;
 			pf.matchesMedia = originalMatchesMedia;
 			pf.processSourceSet = originalProcessSourceSet;
 			pf.restrictsMixedContent = originalrestrictsMixedContentMethod;
@@ -434,18 +431,6 @@
 		deepEqual(image.currentSrc, "foo300", "currentSrc left alone when matched" );
 	});
 
-	test( "removeVideoShim", function() {
-		var $videoShim = $( ".video-shim" );
-
-		equal( $videoShim.find( "video" ).length, 1 );
-		equal( $videoShim.find( "source" ).length, 2 );
-
-		pf.removeVideoShim( $videoShim[0] );
-
-		equal( $videoShim.find( "video" ).length, 0 );
-		equal( $videoShim.find( "source" ).length, 2 );
-	});
-
 	test("getMatch returns the first matching `source`", function() {
 		var firstsource = $( ".first-match" )[ 0 ].parentNode.getElementsByTagName( "source" )[ 0 ];
 
@@ -511,10 +496,6 @@
 
 		mockPicture[ pf.ns ] = {
 			evaluated: true
-		};
-
-		pf.removeVideoShim = function() {
-			ok( false );
 		};
 
 		picturefill({ reevaluate: false, elements: [ mockPicture ] });
