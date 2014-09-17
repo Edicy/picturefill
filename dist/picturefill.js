@@ -1,4 +1,4 @@
-/*! Picturefill - v2.1.0 - 2014-09-16
+/*! Picturefill - v2.1.0 - 2014-09-17
 * http://scottjehl.github.io/picturefill
 * Copyright (c) 2014 https://github.com/scottjehl/picturefill/blob/master/Authors.txt; Licensed MIT */
 /*! matchMedia() polyfill - Test a CSS media type/query in JS. Authors & copyright (c) 2012: Scott Jehl, Paul Irish, Nicholas Zakas, David Knight. Dual MIT/BSD license */
@@ -437,8 +437,14 @@ window.matchMedia || (window.matchMedia = function() {
 	};
 
 	pf.getMatch = function( img, picture ) {
-		var sources = picture.querySelectorAll("source, img"),
-			match;
+		var video = picture.getElementsByTagName("video"),
+			sources = picture.childNodes,
+			match, videoSources;
+
+		if (video.length > 0) {
+			videoSources = Array.prototype.slice.call(video[0].childNodes);
+			sources = videoSources.concat(Array.prototype.slice.call(sources));
+		}
 
 		// Go through each child, and if they have media queries, evaluate them
 		for ( var j = 0, slen = sources.length; j < slen; j++ ) {
@@ -496,7 +502,6 @@ window.matchMedia || (window.matchMedia = function() {
 
 		options = opt || {};
 		elements = options.elements || pf.getAllElements();
-
 		// Loop through all elements
 		for ( var i = 0, plen = elements.length; i < plen; i++ ) {
 			element = elements[ i ];
